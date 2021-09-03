@@ -22,7 +22,7 @@ public class WebhookEventController {
         log.info("payload received");
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Github-Webhook-Client-Version", "version1");
+        headers.add("X-Github-Webhook-Client-Version", "version2");
 
 //        if(Objects.isNull(userAgent) || !userAgent.startsWith(githubUserAgentPrefix)){
 //            return new ResponseEntity<>("Invalid request.", headers, HttpStatus.BAD_REQUEST);
