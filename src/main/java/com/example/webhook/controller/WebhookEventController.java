@@ -23,7 +23,7 @@ public class WebhookEventController {
 
 		log.info("payload received");
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("X-Github-Webhook-Client-Version", "version2");
+		headers.add("X-Github-Webhook-Client-Version", "version");
 
 		if (signature == null) {
 			return new ResponseEntity<>("No signature given.", headers, HttpStatus.BAD_REQUEST);
