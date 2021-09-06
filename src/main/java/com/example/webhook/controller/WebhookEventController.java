@@ -14,44 +14,33 @@ import java.security.MessageDigest;
 @Slf4j
 public class WebhookEventController {
 
-    private static final String EOL = "\n";
-    @PostMapping
-    public ResponseEntity<String> collapseEvent(@RequestHeader("X-Hub-Signature") String signature,
-                                                @RequestBody String payload) {
+	private static final String EOL = "\n";
 
-        log.info("payload received");
+	@PostMapping
+	public ResponseEntity<String> collapseEvent(
+			@RequestHeader("X-Hub-Signature") String signature,
+			@RequestBody String payload) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Github-Webhook-Client-Version", "version2");
+		log.info("payload received");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("X-Github-Webhook-Client-Version", "version2");
 
-//        if(Objects.isNull(userAgent) || !userAgent.startsWith(githubUserAgentPrefix)){
-//            return new ResponseEntity<>("Invalid request.", headers, HttpStatus.BAD_REQUEST);
-//        }
+		if (signature == null) {
+			return new ResponseEntity<>("No signature given.", headers, HttpStatus.BAD_REQUEST);
+		}
 
-        if (signature == null) {
-                return new ResponseEntity<>("No signature given.", headers, HttpStatus.BAD_REQUEST);
-            }
+		String computed = String.format("sha1=%s", HmacUtils.hmacSha1Hex("murtuzatest", payload));
 
-        String computed = String.format("sha1=%s", HmacUtils.hmacSha1Hex("murtuzatest", payload));
+		if (!MessageDigest.isEqual(signature.getBytes(), computed.getBytes())) {
+			return new ResponseEntity<>("Invalid signature.", headers, HttpStatus.UNAUTHORIZED);
+		}
 
-        if (!MessageDigest.isEqual(signature.getBytes(), computed.getBytes())) {
-                return new ResponseEntity<>("Invalid signature.", headers, HttpStatus.UNAUTHORIZED);
-            }
+		int bytes = payload.getBytes().length;
+		StringBuilder message = new StringBuilder();
+		message.append("Signature OK.").append(EOL);
 
-        int bytes = payload.getBytes().length;
-        StringBuilder message = new StringBuilder();
-        message.append("Signature OK.").append(EOL);
+		message.append(String.format("Received %d bytes.", bytes)).append(EOL);
+		return new ResponseEntity<>(message.toString(), headers, HttpStatus.OK);
 
-        message.append(String.format("Received %d bytes.", bytes)).append(EOL);
-        return new ResponseEntity<>(message.toString(), headers, HttpStatus.OK);
-
-
-
-
-
-
-
-
-//        return ResponseEntity.status(200).build();
-    }
+	}
 }
