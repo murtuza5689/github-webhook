@@ -29,7 +29,7 @@ public class WebhookEventController {
 			return new ResponseEntity<>("No signature given.", headers, HttpStatus.BAD_REQUEST);
 		}
 
-		String computed = String.format("sha1=%s", HmacUtils.hmacSha1Hex("murtuzatest", payload));
+		String computed = String.format("sha1=%s", HmacUtils.hmacSha1Hex("murtuzatest1", payload));
 
 		if (!MessageDigest.isEqual(signature.getBytes(), computed.getBytes())) {
 			return new ResponseEntity<>("Invalid signature.", headers, HttpStatus.UNAUTHORIZED);
